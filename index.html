@@ -52,12 +52,17 @@
                         <button class="send" onclick="sendMessage()">&#x27a4</button>
                     </form>
       
-                    <div id="chatDiv"></div>
+                    <div id="chatDiv">
+                        <!-- <div id="lchatDiv"></div>
+                        <div id="rchatDiv"></div> -->
+                    </div>
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
                     <script type="text/javascript" charset="utf-8">
                     var socket=io.connect()
                     let username='{{user}}';
                     let current;
+                    var chatDiv = document.getElementById('chatDiv');
+
 
                     
                     // Extract the username from the clicked <li> element's data attribute and store in variable 
@@ -78,30 +83,78 @@
 
 
                         socket.on('message',function(data){
-                                var chatDiv = document.getElementById('chatDiv');
+                               // var lchatDiv = document.getElementById('lchatDiv');
+                               // var rchatDiv = document.getElementById('rchatDiv');
                                 var message = document.createElement('p');
-                                message.textContent = data;
-                                chatDiv.appendChild(message);
+                                message.textContent = data.message;
+                                let sender=data.sender;
+                              /*  if (username == sender) {
+                                    rchatDiv.appendChild(message);
+                                }
+                                else {
+                                    lchatDiv.appendChild(message);
+                                } */ 
+
+                                if (username == sender) {
+                                    newDiv (message,true);
+                                }
+                                else {
+                                    newDiv (message,false);
+                                }
+
+                                if (username == sender) {
+                                    newDiv (rchatDiv,message,lchatDiv);
+                                }
+                                else {
+                                    newDiv (lchatDiv,message,rchatDiv);
+                                }
+                                
                                 console.log("socket.on");
                         });
 
                         function sendMessage(){
                             event.preventDefault();
                             let mssg=document.getElementById("textmessage").value;
-                            socket.emit('send_message',{'message':mssg,'room':current});
+                            socket.emit('send_message',{'message':mssg,'room':current,'sender':username});
                             document.getElementById("textmessage").value="";
                             
                         }
-                                  
 
+                        function newDiv (msg,bool) {
+                            let Div = document.createElement('div');
+                            Div.style.backgroundColor = "white";
+                            Div.style.borderRadius = "40px";
+                            if (bool) {
+                                Div.style.justifySelf = "right";
+                            }
+                            else {
+                                Div.style.justifySelf = "left";
+                            }
+                            Div.textContent = msg;
+                            chatDiv.appendChild(Div);
+                        }      
+
+                       /* function newDiv (mainDiv,msg,noDiv) {
+                            let Div1 = document.createElement('div');
+                            Div1.style.backgroundColor = "white";
+                            Div1.style.borderRadius = "40px";
+
+                            let Div2 = document.createElement('div');
+                            Div2.style.display = "invisible";
+
+                            Div1.textContent = msg;
+                            Div2.textContent = "";
+
+                            mainDiv.appendChild(Div1);
+                            noDiv.appendChild(Div2);
+                        } */
                 </script>
                 </div>
             </div>
         </div>
-        <script src="javascript.js"></script>
+        <script src="{{ url_for('static', filename='javascript.js') }}"></script>
+
 
     </body>
 
 </html>
-
-

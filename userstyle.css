@@ -164,3 +164,16 @@ body:has(.addfriend:hover) .addfriend {
 #chat-list:nth-child(odd) {
     background-color: #eaeaed;
 }
+
+#chatDiv {
+    display: flex;
+    flex-direction: column;
+}
+
+/*#lchatDiv {
+    justify-self: left;
+}
+
+#rchatDiv {
+    justify-self: right;
+} */
